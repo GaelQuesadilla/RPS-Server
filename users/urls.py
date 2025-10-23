@@ -14,32 +14,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from users.views import WhoAmI
+from users.api import PlayerViewSet, Register
 from rest_framework import routers
-from rest_framework_simplejwt import views as jwt_views
+
+
 router = routers.DefaultRouter()
+
+
+router.register('player', PlayerViewSet, basename='players')
+router.register('register', Register, basename='register')
 
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls),
-
     path(
-        'api/token/',
-        jwt_views.TokenObtainPairView.as_view(),
-        name='token_obtain_pair'
+        'whoami/',
+        WhoAmI.as_view(),
+        name='Who_am_I'
     ),
 
-    path(
-        'api/token/refresh/',
-        jwt_views.TokenRefreshView.as_view(),
-        name='token_refresh'
-    ),
-
-
-    path('api/users/', include('users.urls')),
-    path('api/games/', include('games.urls')),
-
+    path('', include(router.urls))
 
 ]
